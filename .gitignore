@@ -1,0 +1,21 @@
+# Node.js
+.npm-cache
+node_modules/
+dist/
+
+# C++ / Build artifacts
+build/
+*.o
+*.a
+*.so
+*.dylib
+*.out
+
+# OS files
+.DS_Store
+
+# Editor files
+.vscode/
+.idea/
+*.swp
+*.swo

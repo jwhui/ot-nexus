@@ -1,0 +1,97 @@
+syntax = "proto3";
+
+package nexus;
+
+message SimulationEvent {
+  uint64 timestamp_us = 1; // Simulation time in microseconds
+  oneof event {
+    NodeUpdate node_update = 2;
+    LinkUpdate link_update = 3;
+    PacketCaptured packet_captured = 4;
+  }
+}
+
+message NodeUpdate {
+  uint32 node_id = 1;
+  string role = 2; // Leader, Router, REED, SED
+  uint32 queue_depth = 3;
+  uint64 queue_delay_us = 4;
+  uint32 rloc16 = 5;
+  float x = 6;
+  float y = 7;
+}
+
+message LinkUpdate {
+  uint32 source_node_id = 1;
+  uint32 destination_node_id = 2;
+  bool is_active = 3;
+  float link_quality = 4; // e.g., RSSI or link quality index
+}
+
+message PacketCaptured {
+  uint32 source_node_id = 1;
+  uint32 destination_node_id = 2;
+  string protocol = 3; 
+  string summary = 4;
+  bytes raw_payload = 5;
+  string decoded_info = 6; // Structured or JSON string of decoded fields
+}
+
+message ResetRequest {}
+message ResetResponse {}
+
+message SetSpeedRequest {
+  float speed_factor = 1;
+}
+message SetSpeedResponse {}
+
+message SetNodeStateRequest {
+  uint32 node_id = 1;
+  bool enabled = 2;
+}
+message SetNodeStateResponse {}
+
+message SetNodePositionRequest {
+  uint32 node_id = 1;
+  float x = 2;
+  float y = 3;
+}
+message SetNodePositionResponse {}
+
+message CreateNodeRequest {
+  float x = 1;
+  float y = 2;
+}
+
+message CreateNodeResponse {
+  uint32 node_id = 1;
+}
+
+message FormNetworkRequest {
+  uint32 node_id = 1;
+}
+
+message FormNetworkResponse {}
+
+message JoinNetworkRequest {
+  uint32 node_id = 1;
+  uint32 target_node_id = 2;
+  string mode = 3; 
+}
+
+message JoinNetworkResponse {}
+
+service NexusService {
+  rpc StreamEvents(StreamRequest) returns (stream SimulationEvent);
+  rpc Reset(ResetRequest) returns (ResetResponse);
+  rpc SetSpeed(SetSpeedRequest) returns (SetSpeedResponse);
+  rpc SetNodeState(SetNodeStateRequest) returns (SetNodeStateResponse);
+  rpc SetNodePosition(SetNodePositionRequest) returns (SetNodePositionResponse);
+  rpc CreateNode(CreateNodeRequest) returns (CreateNodeResponse);
+  rpc FormNetwork(FormNetworkRequest) returns (FormNetworkResponse);
+  rpc JoinNetwork(JoinNetworkRequest) returns (JoinNetworkResponse);
+}
+
+message StreamRequest {
+  bool live = 1; // True if live, False if requesting historical (if supported by service)
+}
