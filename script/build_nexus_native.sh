@@ -32,11 +32,13 @@ mkdir -p nexus_native_build
 cd nexus_native_build
 
 # Configure with CMake
-cmake -GNinja -DOT_PLATFORM=nexus \
+cmake -GNinja -DOT_PLATFORM=nexus -DOT_COMPILE_WARNING_AS_ERROR=ON \
+    -DOT_MULTIPLE_INSTANCE=ON \
+    -DOT_THREAD_VERSION=1.4 -DOT_APP_CLI=OFF -DOT_APP_NCP=OFF -DOT_APP_RCP=OFF \
     -DOT_PROJECT_CONFIG="$PROJECT_ROOT/openthread/tests/nexus/openthread-core-nexus-config.h" \
     ..
 
 # Build nexus_live_demo
 ninja nexus_live_demo
 
-echo "Build complete! Binary located at openthread/tests/nexus/nexus_live_demo"
+echo "Build complete! Binary located at openthread/nexus_native_build/tests/nexus/nexus_live_demo"
