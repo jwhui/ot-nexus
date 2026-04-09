@@ -29,9 +29,6 @@ if command -v emcc > /dev/null; then
 elif [ -n "$EMSDK" ] && [ -f "$EMSDK/emsdk_env.sh" ]; then
     echo "Sourcing Emscripten environment from $EMSDK..."
     source "$EMSDK/emsdk_env.sh"
-elif [ -f "/Users/jonhui/emsdk/emsdk_env.sh" ]; then
-    echo "Sourcing Emscripten environment from default path..."
-    source "/Users/jonhui/emsdk/emsdk_env.sh"
 else
     echo "Error: Emscripten not found in PATH and EMSDK not set."
     exit 1

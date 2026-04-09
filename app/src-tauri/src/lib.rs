@@ -9,6 +9,8 @@ use std::sync::Mutex;
 
 struct SimulatorState(Mutex<Option<Child>>);
 
+const NEXUS_BINARY_PATH: &str = "../binary/nexus_live_demo";
+
 #[tauri::command]
 async fn connect_simulator(app: tauri::AppHandle) -> Result<(), String> {
     let address = "http://127.0.0.1:50051";
@@ -161,7 +163,7 @@ async fn reset_simulator(state: tauri::State<'_, SimulatorState>) -> Result<(), 
     }
 
     println!("Spawning fresh nexus_live_demo process...");
-    let new_child = std::process::Command::new("/Users/jonhui/jwhui/ot-nexus/openthread/tests/nexus/nexus_live_demo")
+    let new_child = std::process::Command::new(NEXUS_BINARY_PATH)
         .spawn()
         .map_err(|e| format!("Failed to respawn simulator: {}", e))?;
     
@@ -176,7 +178,7 @@ pub fn run() {
         .setup(|app| {
             use tauri::Manager;
             let state = app.state::<SimulatorState>();
-            let child = std::process::Command::new("/Users/jonhui/jwhui/ot-nexus/openthread/tests/nexus/nexus_live_demo")
+            let child = std::process::Command::new(NEXUS_BINARY_PATH)
                 .spawn()
                 .expect("failed to spawn nexus_live_demo");
             *state.0.lock().unwrap() = Some(child);

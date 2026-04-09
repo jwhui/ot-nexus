@@ -24,19 +24,26 @@ set -e
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 PROJECT_ROOT="$( dirname "$SCRIPT_DIR" )"
 
-cd "$PROJECT_ROOT/openthread"
-
 echo "Building Nexus backend..."
 
+cd "$PROJECT_ROOT/openthread"
 mkdir -p nexus_native_build
 cd nexus_native_build
 
-# Configure with CMake
-cmake -GNinja -DOT_PLATFORM=nexus \
-    -DOT_PROJECT_CONFIG="$PROJECT_ROOT/openthread/tests/nexus/openthread-core-nexus-config.h" \
-    ..
+if [ ! -f build.ninja ]; then
+    echo "Configuring Native build with CMake..."
+    cmake -GNinja -DOT_PLATFORM=nexus -DOT_COMPILE_WARNING_AS_ERROR=ON \
+        -DOT_MULTIPLE_INSTANCE=ON \
+        -DOT_THREAD_VERSION=1.4 -DOT_APP_CLI=OFF -DOT_APP_NCP=OFF -DOT_APP_RCP=OFF \
+        -DOT_PROJECT_CONFIG="$PROJECT_ROOT/openthread/tests/nexus/openthread-core-nexus-config.h" \
+        ..
+fi
 
-# Build nexus_live_demo
+echo "Compiling..."
 ninja nexus_live_demo
 
-echo "Build complete! Binary located at openthread/tests/nexus/nexus_live_demo"
+echo "Copying artifacts to app..."
+mkdir -p "$PROJECT_ROOT/app/binary"
+cp tests/nexus/nexus_live_demo "$PROJECT_ROOT/app/binary/"
+
+echo "Build complete! Artifacts updated in app."
